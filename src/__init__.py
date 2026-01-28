@@ -1,0 +1,1 @@
+"""Energy consumption analysis modules."""
