@@ -60,7 +60,7 @@ The main analysis is in **`main.ipynb`** at the project root.
 1. **Launch Jupyter**:
 
    ```bash
-   jupyter notebook main.ipynb
+   poetry run jupyter notebook main.ipynb
    ```
 
 2. **Run the analysis**:
