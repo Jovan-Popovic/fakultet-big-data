@@ -1,27 +1,29 @@
 """Visualization functions for energy consumption analysis."""
 
+from typing import List, Optional
+
 from matplotlib.pyplot import (
-    figure,
-    scatter,
-    plot,
     axhline,
-    title,
-    xlabel,
-    ylabel,
-    legend,
+    colorbar,
+    figure,
     grid,
-    xticks,
+    hist,
+    legend,
+    plot,
     savefig,
+    scatter,
     show,
     text,
     tight_layout,
-    colorbar,
+    title,
+    xlabel,
+    xticks,
+    ylabel,
 )
-from seaborn import set_style, boxplot, heatmap, pairplot
+from numpy import ndarray, poly1d, polyfit
 from pandas import DataFrame, Series
-from numpy import ndarray, polyfit, poly1d
-from scipy import stats
-from typing import Optional, List
+from scipy.stats import probplot
+from seaborn import boxplot, heatmap, pairplot, set_style
 
 
 # Set seaborn style for professional appearance
@@ -42,10 +44,7 @@ def plot_histogram_with_kde(
     """
     figure(figsize=(10, 6))
 
-    # Use matplotlib hist directly
-    import matplotlib.pyplot as plt
-
-    plt.hist(data, bins=30, alpha=0.7, edgecolor="black", density=True)
+    hist(data, bins=30, alpha=0.7, edgecolor="black", density=True)
 
     # Add KDE curve
     data.plot(kind="kde", color="red", linewidth=2)
@@ -298,9 +297,12 @@ def plot_qq_plot(residuals: ndarray, save_path: Optional[str] = None) -> None:
     """
     figure(figsize=(10, 6))
 
-    import matplotlib.pyplot as plt
+    # Get theoretical and sample quantiles
+    theoretical_quantiles, sample_quantiles = probplot(residuals, dist="norm")
 
-    stats.probplot(residuals, dist="norm", plot=plt)
+    # Plot Q-Q plot
+    scatter(theoretical_quantiles[0], theoretical_quantiles[1], alpha=0.6)
+    plot(theoretical_quantiles[0], theoretical_quantiles[0], "r--", linewidth=2)
 
     title("Q-Q Plot", fontsize=14, fontweight="bold")
     xlabel("Theoretical Quantiles", fontsize=12)

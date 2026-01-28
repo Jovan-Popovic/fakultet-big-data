@@ -2,12 +2,13 @@
 
 from typing import Dict, List, Tuple
 
-import statsmodels.api as sm
 from numpy import ndarray, sqrt
 from pandas import DataFrame, Series
 from sklearn.cluster import KMeans
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
+from statsmodels.api import OLS, add_constant
+from statsmodels.regression.linear_model import RegressionResultsWrapper
 
 
 def scale_features(
@@ -32,7 +33,7 @@ def scale_features(
 
 def train_ols_regression(
     train_features: ndarray, train_target: Series
-) -> sm.regression.linear_model.RegressionResultsWrapper:
+) -> RegressionResultsWrapper:
     """
     Train OLS regression model using statsmodels.
 
@@ -44,17 +45,15 @@ def train_ols_regression(
         Fitted OLS model
     """
     # Add constant term for intercept
-    features_with_constant = sm.add_constant(train_features)
+    features_with_constant = add_constant(train_features)
 
     # Fit OLS model
-    model = sm.OLS(train_target, features_with_constant).fit()
+    model = OLS(train_target, features_with_constant).fit()
 
     return model
 
 
-def predict_ols(
-    model: sm.regression.linear_model.RegressionResultsWrapper, test_features: ndarray
-) -> ndarray:
+def predict_ols(model: RegressionResultsWrapper, test_features: ndarray) -> ndarray:
     """
     Make predictions using fitted OLS model.
 
@@ -66,7 +65,7 @@ def predict_ols(
         Predicted values
     """
     # Add constant term for intercept
-    features_with_constant = sm.add_constant(test_features)
+    features_with_constant = add_constant(test_features)
 
     predictions = model.predict(features_with_constant)
 
